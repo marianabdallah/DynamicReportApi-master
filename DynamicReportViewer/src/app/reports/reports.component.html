@@ -1,0 +1,95 @@
+
+<div class="container mb-3 mt-5">
+  <div class="form-row">
+    <div class="col-md-4">
+      <label class="form-label" for="systemReport">Select Report</label>
+      <select class="form-select" name="systemReport" [(ngModel)]="selectedReport">
+        <option *ngFor="let report of systemReports" [ngValue]="report">{{report.reportTitle}}</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <input type="button" (click)="loadInputs()" class="btn btn-primary mt-2" value="Search">
+    </div>
+  </div>
+
+
+</div>
+
+<div class="container mb-3 mt-5">
+  <h1>{{selectedReport.reportTitle}}</h1>
+  <ng-container>
+    <div class="row">
+
+      <div class="col-md-6" *ngFor="let item of systemReport.inputStructure ;let index = index">
+        <ng-container *ngIf="item.name != 'ConfigurationType' && item.name != 'FilterValue'">
+
+          <div *ngIf="item.dataType == 'boolean' && item.isList == false" [ngClass]="item.dataType == 'boolean' ? 'form-check mt-4' : ''">
+            <label class="form-label">{{ item.name }}</label>
+            <input class="form-check-input" *ngIf="item.dataType == 'boolean'" type="checkbox" [(ngModel)]="item.value" value="item.value" />
+          </div>
+
+          <div *ngIf="item.dataType == 'DateTime' && item.isList == false">
+            <label class="form-label">{{ item.name }}</label>
+            <input class="form-control" *ngIf="item.dataType == 'DateTime' && item.isEnum == false && item.isList == false" id="date-birth" type="text" bsDatepicker value="{{item.value | date:'MM-dd-YYYY'}}" placeholder="Select Date" [(bsValue)]="item.value" [bsConfig]="{ isAnimated: true, rangeInputFormat: 'MM-DD-YYYY' }" autocomplete="off" [(ngModel)]="item.value" name="Date" />
+          </div>
+
+
+          <div *ngIf="item.dataType == 'string' && item.isList == false">
+            <label class="form-label">{{ item.name }}</label>
+            <input class="form-control col-md-4" *ngIf="item.dataType == 'string' && item.isList == false" type="text" [(ngModel)]="item.value" value="item.value" />
+          </div>
+
+          <div *ngIf="item.dataType == 'number' && item.isList == false">
+            <label class="form-label">{{ item.name }}</label>
+            <input class="form-control" *ngIf="item.dataType == 'number' && item.isList == false" type="number" [(ngModel)]="item.value" value="item.value" />
+          </div>
+
+          <div *ngIf="item.isEnum == true && item.isList == false">
+            <label class="form-label" for="systemReport">{{item.name}}</label>
+            <ng-select class="form-select" [items]="item.enumValues.names" placeholder="select {{item.name}}" bindLabel="name" [(ngModel)]="item.value" bindValue="value">
+              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                {{ item.name }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                {{ item.name }}
+              </ng-template>
+            </ng-select>
+          </div>
+
+
+          <div *ngIf="item.isList == true">
+            <label class="form-label" for="item.name">Select {{item.name}}</label>
+            <select class="form-select" name="item.name" [(ngModel)]="item.value">
+              <option *ngFor="let listItem of item.listSource" [ngValue]="listItem.id">{{listItem.name}}</option>
+            </select>
+          </div>
+
+          <div *ngIf="item.dataType.toLocaleLowerCase() == 'daterange'">
+            <label class="form-label" for="item.name">Select {{item.name}}</label>
+            <select class="form-select" name="item.name" [(ngModel)]="item.value">
+              <option *ngFor="let listItem of item.dateRanges" [ngValue]="listItem">{{listItem}}</option>
+            </select>
+          </div>
+
+        </ng-container>
+      </div>
+    </div>
+    <div *ngIf="systemReport.inputStructure" class="row">
+      <div class="col-md-3">
+        <input type="button" (click)="executeReport()" class="btn btn-primary mt-2" value="Search">
+      </div>
+    </div>
+    <table class="table mt-5">
+      <thead>
+        <tr>
+          <th *ngFor="let head of reportResponse.outputStructure">{{head.name}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of reportResponse.resultDataSet">
+          <td *ngFor="let list of item | keys">{{item[list]}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+</div>
