@@ -29,12 +29,6 @@ jobs:
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.5
       
-    - name: remove code generation files
-      run: |
-           rm EMR/dev/packages/DBToolRunner_m_config.exe
-           rm EMR/dev/packages/ModelCreator.exe
-           rm EMR/dev/packages/LogicGenerator.exe
-    
     - name: Restore NuGet packages
       run: nuget restore DynamicReportViewer.sln
     
